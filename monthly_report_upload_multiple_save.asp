@@ -94,6 +94,22 @@
 		' 파일 유효성 확인
 		'======================================
 		fileTotalSize = fileTotalSize + objUpload("fileInput")(index).fileLen
+		orgFileName = objUpload("fileInput")(index).FileName
+		orgFileExtension = objUpload("fileInput")(index).fileExtension
+		orgFileMimeType = objUpload("fileInput")(index).MimeType
+		fileNameArray = Split(Replace(orgFileName, "." & orgFileExtension, ""), "_")
+
+		If orgFileExtension <> "pdf" Then
+			Call sendResultAndEnd(0, "[오류발생]" & "pdf 파일만 업로드 가능합니다(1)", "")
+		End If
+
+		If orgFileMimeType <> "application/pdf" Then
+			Call sendResultAndEnd(0, "[오류발생]" & "pdf 파일만 업로드 가능합니다(2)", "")
+		End If
+
+		If UBound(fileNameArray) <> 6 Then '파일 이름 쪼갠 것이 7개가 아닌 경우는 이름 규칙 오류
+			Call sendResultAndEnd(0, "[오류발생]" & "파일의 이름 규칙이 올바르지 않습니다", "")
+		End If
 	Next
 
 	If fileCount < 1 Then
@@ -115,10 +131,6 @@
 		orgFileName = objUpload("fileInput")(index).FileName
 		orgFileExtension = objUpload("fileInput")(index).fileExtension
 		fileNameArray = Split(Replace(orgFileName, "." & orgFileExtension, ""), "_")
-
-		If orgFileExtension <> "pdf" Then
-			Call sendResultAndEnd(0, "[오류발생]" & "pdf 파일만 업로드 가능합니다", "")
-		End If
 
 		'======================================
 		' 파일 존재 여부 확인
